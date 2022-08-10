@@ -19,8 +19,16 @@ const isPageAvailable = {
       const pageMetaData = await notion.pages.retrieve({
         page_id: req.body.inputid,
       });
-      console.log(pageMetaData);
-      req.title = pageMetaData.properties.title.id;
+      console.log("Page meta data ----------->", pageMetaData);
+      //req.title = pageMetaData.properties.title.id;
+      // retrieve page property item to get title
+
+      const titleData = await notion.pages.properties.retrieve({
+        page_id: req.body.inputid,
+        property_id: pageMetaData.properties.title.id,
+      });
+      console.log(titleData.results[0].title.text.content);
+      req.title = titleData.results[0].title.text.content;
 
       if (pageMetaData.object == "page") next();
     } catch (err) {
@@ -30,7 +38,7 @@ const isPageAvailable = {
 
   isPageOnConf: async (req, res, next) => {
     try {
-      console.log(req.title);
+      console.log(req);
       confluence.getContentByPageTitle(
         req.body.inputname,
         req.title,
@@ -38,12 +46,13 @@ const isPageAvailable = {
           console.log(data);
 
           if (err || data.results.length == 0) {
+            console.log("->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hello");
             next();
           }
         }
       );
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   },
 };

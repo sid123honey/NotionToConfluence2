@@ -23,7 +23,7 @@ exports.sendPage2Confluence = async (req, res, next) => {
 
     console.log("Trying to Finding The Page MetaData . . . . . .");
     const title = req.title;
-    console.log(title);
+    //console.log(req);
     console.log("Got the Metadata . . .");
 
     console.log("Requesting for Page Blocks . . . ");
@@ -31,7 +31,7 @@ exports.sendPage2Confluence = async (req, res, next) => {
     const pageBlocks = await notion.blocks.children.list({
       block_id: inputid,
     });
-    console.log(pageBlocks);
+    // console.log(pageBlocks);
 
     console.log("Recreating Page . . . . ");
     const page = await createPage(pageBlocks.results);
@@ -43,9 +43,8 @@ exports.sendPage2Confluence = async (req, res, next) => {
     console.log("Started Sending Data to Confluence .. ..");
 
     confluence.postContent(inputname, title, page, null, function (err, data) {
-     
       if (data && data.status != 400) {
-        console.log("here");
+        console.log("Page successfully created on confluence");
         res.status(200);
       } else {
         console.log("here1");
